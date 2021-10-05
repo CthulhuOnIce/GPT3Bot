@@ -1,0 +1,6 @@
+prefix: ";;"
+token: "TOKEN HERE"
+key: "OPENAI KEY HERE"
+
+sudoers: # user ids with admin permissionsS
+  - 291321148715696138
