@@ -5,7 +5,8 @@ import discord
 import simplejson as json
 import openai
 import random
-from GPTJ.Basic_api import SimpleCompletion
+import requests
+from kgptj import SimpleCompletion
 
 C = {}
 
