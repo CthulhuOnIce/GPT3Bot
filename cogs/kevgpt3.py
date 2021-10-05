@@ -21,7 +21,7 @@ Rexplain = {
 }
 
 personalities = [
-	"kev", "gus",
+	"kev", "gus", "fylke"
 ]
 
 blacklist = []
@@ -87,6 +87,7 @@ class GPT3(commands.Cog):
 		embed.add_field(name="Restriction Level", value=R, inline=False)
 		embed.add_field(name="Restriction Level Explained", value=Rexplain[R], inline=False)
 		embed.add_field(name="Personality", value=CP, inline=False)
+		embed.add_field(name="Personalities", value=personalities, inline=False)
 		embed.add_field(name="Engine", value=C["engine"], inline=False)
 		embed.add_field(name="Blacklist Status", value=(ctx.author.id in blacklist), inline=False)
 		await ctx.send(embed=embed)
@@ -109,6 +110,7 @@ class GPT3(commands.Cog):
 			return
 		CP = personality
 		latestlog = []
+
 		await ctx.send("Updated")
 
 	@commands.command(brief="Change personality")
