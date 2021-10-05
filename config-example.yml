@@ -1,6 +1,10 @@
 prefix: ";;"
 token: "TOKEN HERE"
 key: "OPENAI KEY HERE"
+engine: gptj # gpt3 or gptj
+# gpt3 is proprietary and costs money to use
+# gptj is slower and worse, but free and still passable
 
+botchannel: 
 sudoers: # user ids with admin permissionsS
   - 291321148715696138

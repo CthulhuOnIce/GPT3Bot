@@ -5,3 +5,4 @@ disputils
 simplejson
 pysqlite3
 openai
+gptj

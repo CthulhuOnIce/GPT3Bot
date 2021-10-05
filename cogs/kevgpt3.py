@@ -5,6 +5,7 @@ import discord
 import simplejson as json
 import openai
 import random
+from GPTJ.Basic_api import SimpleCompletion
 
 C = {}
 
@@ -27,7 +28,7 @@ blacklist = []
 
 latestlog = []
 
-def answer(question):
+def gpt3_answer(question):
 	global latestlog
 
 	prepend = P[CP] + "\n".join(latestlog)
@@ -51,6 +52,31 @@ def answer(question):
 
 	return response_text
 
+def gptj_answer(question):
+	global latestlog
+
+	prepend = P[CP] + "\n".join(latestlog)
+
+	prompt = f"{prepend}\nQ: \"{question}\"\nA: \""
+
+	query = SimpleCompletion(
+		prompt, 
+		length=60, 
+		t=0.75, 
+		)
+
+	response_text = query.simple_completion().split("\"")[0]
+
+	latestlog.append(f"Q: \"{question}\"\nA: \"{response_text}\"\n")
+
+	latestlog = latestlog[::-1][0:9]
+
+	return response_text
+
+def answer(question):
+	if C["engine"] == "gpt3":	return gpt3_answer(question)
+	elif C["engine"] == "gptj":	return gptj_answer(question)
+
 class GPT3(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
@@ -61,6 +87,7 @@ class GPT3(commands.Cog):
 		embed.add_field(name="Restriction Level", value=R, inline=False)
 		embed.add_field(name="Restriction Level Explained", value=Rexplain[R], inline=False)
 		embed.add_field(name="Personality", value=CP, inline=False)
+		embed.add_field(name="Engine", value=C["engine"], inline=False)
 		embed.add_field(name="Blacklist Status", value=(ctx.author.id in blacklist), inline=False)
 		await ctx.send(embed=embed)
 
@@ -82,6 +109,14 @@ class GPT3(commands.Cog):
 			return
 		CP = personality
 		latestlog = []
+		await ctx.send("Updated")
+
+	@commands.command(brief="Change personality")
+	async def setengine(self, ctx, newengine:str):
+		if ctx.author.id not in C["sudoers"]:
+			await ctx.send("You do not have permissiont to run this command.")
+			return
+		C["engine"] = newengine
 		await ctx.send("Updated")
 
 	@commands.command(brief="Toggle blacklist (disables the bot from replying to you randomly)")
