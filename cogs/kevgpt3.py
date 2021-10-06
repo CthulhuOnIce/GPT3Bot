@@ -12,8 +12,8 @@ C = {}
 
 P = {}
 CP = "gus"  # the name of the current (default) personality
-R = 0 # restriction level, 0 = anyone can conversate with the bot anywhere, 1, conversate with the bot in bot chat only, 2, the bot will only reply randomly everywhere
-RC = 2  # the chance that the bot will respond to any given message
+R = 1 # restriction level, 0 = anyone can conversate with the bot anywhere, 1, conversate with the bot in bot chat only, 2, the bot will only reply randomly everywhere
+RC = 4  # the chance that the bot will respond to any given message
 
 Rexplain = {
 	0: "Anyone can ping the bot anywhere, and it will reply, as well as responding to posts randomly",
@@ -62,8 +62,8 @@ def gptj_answer(question):
 
 	query = SimpleCompletion(
 		prompt, 
-		length=60, 
-		t=0.75, 
+		length=75, 
+		t=0.78, 
 		)
 
 	response_text = query.simple_completion().split("\"")[0]
@@ -74,13 +74,41 @@ def gptj_answer(question):
 
 	return response_text
 
+def raw_gptj_answer(prompt, length, temperature):
+	query = SimpleCompletion(
+		prompt, 
+		length=length, 
+		t=temperature, 
+		)
+
+	response_text = query.simple_completion()
+	return response_text
+
 def answer(question):
+	print(C["engine"])
 	if C["engine"] == "gpt3":	return gpt3_answer(question)
 	elif C["engine"] == "gptj":	return gptj_answer(question)
 
 class GPT3(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
+
+	@commands.command(brief="Autocomplete code")
+	async def code(self, ctx):
+		message = ctx.message
+		codeblockcontent = message.clean_content.split("```")[1]
+		language = codeblockcontent.split("\n")[0]
+		if len(language) > 3:
+			language = None
+		codeblockcontent = codeblockcontent.strip(language)
+		response = raw_gptj_answer(codeblockcontent, 120, 0.8)
+		await ctx.send(f"```{language}\n{codeblockcontent}{response}\n```")
+	
+
+	@commands.command(brief="Auto complete text (gptj)")
+	async def complete(self, ctx, *, txt:str):
+		response = raw_gptj_answer(txt, 120, 0.8)
+		await ctx.send(f"```\n{txt}{response}\n```")
 
 	@commands.command(brief="List settings.")
 	async def settings(self, ctx):
