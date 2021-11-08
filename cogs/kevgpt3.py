@@ -84,6 +84,23 @@ def raw_gptj_answer(prompt, length, temperature):
 	response_text = query.simple_completion()
 	return response_text
 
+def gpt3_codex_answer(prompt):
+	response = openai.Completion.create(
+		engine="davinci-codex", 
+		prompt=prompt, 
+		max_tokens=64, 
+		temperature=0, 
+		top_p=1
+		)
+
+	response_text = response["choices"][0]["text"]
+
+	return response_text
+
+def codex_answer(prompt):
+	if C["gpt-codex"]:		return gpt3_codex_answer(prompt)
+	else:					return raw_gptj_answer(prompt, 120, 0.8)
+
 def answer(question):
 	print(C["engine"])
 	if C["engine"] == "gpt3":	return gpt3_answer(question)
@@ -101,7 +118,7 @@ class GPT3(commands.Cog):
 		if len(language) > 3:
 			language = None
 		codeblockcontent = codeblockcontent.strip(language)
-		response = raw_gptj_answer(codeblockcontent, 120, 0.8)
+		response = codex_answer(codeblockcontent)
 		await ctx.send(f"```{language}\n{codeblockcontent}{response}\n```")
 	
 

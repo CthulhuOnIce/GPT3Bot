@@ -2,6 +2,9 @@ prefix: ";;"
 token: "TOKEN HERE"
 key: "OPENAI KEY HERE"
 engine: gptj # gpt3 or gptj
+# whether to use gpt codex for the ;;code command 
+# seperate setting from above because use of codex is free
+gpt-codex: True 
 # gpt3 is proprietary and costs money to use
 # gptj is slower and worse, but free and still passable
 
